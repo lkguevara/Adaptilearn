@@ -1,0 +1,87 @@
+{
+  "title": "Roadmap: Científico de Datos (Data Science)",
+  "description": "Ruta estructurada desde los fundamentos de programación hasta la implementación de modelos de Machine Learning.",
+  "level": "Beginner/Intermediate",
+  "estimatedTime": "6 Meses",
+  "modules": [
+    {
+      "id": "m-1",
+      "title": "Módulo 1: Fundamentos de Programación y Matemáticas",
+      "description": "Base en Python y matemáticas esenciales.",
+      "topics": [
+        {
+          "id": "t-101",
+          "title": "Introducción a Python para DS",
+          "summary": "Sintaxis básica, estructuras de datos y entorno.",
+          "estimatedTime": "2 Semanas",
+          "subtopics": [
+            "Instalación y entornos virtuales",
+            "Control de flujo",
+            "Funciones y clases básicas"
+          ],
+          "resources": [
+            { "name": "Documentación oficial de Python", "url": "https://www.python.org/" }
+          ]
+        },
+        {
+          "id": "t-102",
+          "title": "Álgebra Lineal y Cálculo Básico",
+          "summary": "Vectores, matrices y gradiente.",
+          "estimatedTime": "3 Semanas",
+          "subtopics": [
+            "Vectores y matrices",
+            "Derivadas parciales",
+            "Optimización"
+          ],
+          "resources": [
+            { "name": "Khan Academy", "url": "enlace_a_khan_academy" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m-2",
+      "title": "Módulo 2: Manipulación y Análisis de Datos",
+      "description": "Limpieza, exploración y visualización de datos.",
+      "topics": [
+        {
+          "id": "t-201",
+          "title": "Pandas y NumPy",
+          "summary": "Manipulación eficiente de datos.",
+          "estimatedTime": "4 Semanas",
+          "subtopics": [
+            "Carga de datos",
+            "Datos nulos",
+            "Agrupaciones"
+          ],
+          "resources": [
+            { "name": "Guía oficial de Pandas", "url": "enlace_a_pandas_docs" }
+          ]
+        },
+        {
+          "id": "t-202",
+          "title": "Visualización de Datos",
+          "summary": "EDA con gráficos.",
+          "estimatedTime": "2 Semanas",
+          "subtopics": [
+            "Histogramas",
+            "Boxplots",
+            "Correlación"
+          ],
+          "resources": [
+            { "name": "Tutorial Seaborn", "url": "enlace_a_seaborn_docs" }
+          ]
+        }
+      ]
+    }
+  ],
+  "connections": [
+    { "from": "t-101", "to": "t-102" },
+    { "from": "t-102", "to": "t-201" },
+    { "from": "t-201", "to": "t-202" }
+  ],
+  "metadata": {
+    "source": "AI (gemini-2.5-flash-preview-09-2025)",
+    "dateGenerated": "2025-12-15"
+  }
+}
