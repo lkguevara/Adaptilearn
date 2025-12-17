@@ -25,7 +25,7 @@ export const register = async (req, res) => {
       password: hashedPassword
     });
 
-    res.status(201).json({
+    res.json({
       _id: user._id,
       email: user.email,
       token: generateToken(user._id)
@@ -50,12 +50,27 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    const token = generateToken(user._id);
+
+    res.cookie('token', token, {
+      httpOnly: true, // Solo se puede acceder a la cookie desde el servidor    
+      secure: false,  // Cambiar a true si se usa HTTPS en producción 
+      sameSite: 'strict',  // Previene el envío de la cookie en solicitudes cross-site
+      maxAge: 7 * 24 * 60 * 60 * 1000 
+    });
+
     res.json({
       _id: user._id,
       email: user.email,
-      token: generateToken(user._id)
+      message: "Login successful"
     });
+    
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+export const logout = (req, res) => {
+  res.clearCookie('token');
+  res.status(200).json({ message: "Logout successful" });
 };
