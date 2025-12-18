@@ -6,7 +6,7 @@ import mongoose from "mongoose"
 import { PORT } from './config.js'
 
 // routes
-import authRoutes from "./routes/authRoutes.js";
+import { authRoutes, roadmapRoutes } from "./routes/index.js";
 
 
 const app = express()
@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 // Routes
 app.use("/api", authRoutes);
+app.use("/api/roadmaps", roadmapRoutes);
 
 // Connect to MongoDB
 mongoose

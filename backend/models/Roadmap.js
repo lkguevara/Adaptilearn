@@ -11,14 +11,6 @@ const topicSchema = new mongoose.Schema({
   summary: String,
   estimatedTime: String,
   subtopics: [String],
-//   completed: {
-//     type: Boolean,
-//     default: false
-//   },
-//   position: {
-//     x: Number,
-//     y: Number
-//   },
   resources: [resourceSchema]
 });
 
@@ -34,6 +26,14 @@ const roadmapSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true
+    },
+    isPublic: {
+      type: Boolean,
+      default: false
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     description: String,
     level: String,
@@ -52,12 +52,6 @@ const roadmapSchema = new mongoose.Schema(
         source: String,
         dateGenerated: String
     },
-
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    }
   },
   {
     timestamps: true
