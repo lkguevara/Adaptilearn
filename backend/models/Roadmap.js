@@ -21,8 +21,18 @@ const moduleSchema = new mongoose.Schema({
   topics: [topicSchema]
 });
 
+// Schema para el contador de IDs secuenciales
+const counterSchema = new mongoose.Schema({
+  name: { type: String, unique: true, required: true },
+  value: { type: Number, default: 0 }
+});
+
 const roadmapSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+      unique: true
+    },
     title: {
       type: String,
       required: true
@@ -59,5 +69,7 @@ const roadmapSchema = new mongoose.Schema(
 );
 
 const Roadmap = mongoose.model("Roadmap", roadmapSchema);
+const Counter = mongoose.model("Counter", counterSchema);
 
+export { Roadmap, Counter };
 export default Roadmap;

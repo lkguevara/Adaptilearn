@@ -1,10 +1,22 @@
-import Roadmap from "../models/Roadmap.js";
+import Roadmap, { Counter } from "../models/Roadmap.js";
+
+// Función auxiliar para generar el siguiente ID secuencial
+const getNextRoadmapId = async () => {
+  const counter = await Counter.findOneAndUpdate(
+    { name: "roadmapCounter" },
+    { $inc: { value: 1 } },
+    { new: true, upsert: true }
+  );
+  return String(counter.value).padStart(3, "0");
+};
 
 // Crear un nuevo roadmap - POST /
 export const createRoadmap = async (req, res) => {
   try {
+    const id = await getNextRoadmapId();
     const roadmap = await Roadmap.create({
       ...req.body,
+      id,
       userId: req.user._id
     });
     res.status(201).json(roadmap);

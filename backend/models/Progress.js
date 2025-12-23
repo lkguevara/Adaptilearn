@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
 const subtopicProgressSchema = new mongoose.Schema({
-    subtopicContent: { type: String, required: true },
-    isCompleted: { type: Boolean, default: false },
+  subtopicContent: { type: String, required: true },
+  isCompleted: { type: Boolean, default: false }
 });
 
 const progressSchema = new mongoose.Schema(
@@ -25,9 +25,9 @@ const progressSchema = new mongoose.Schema(
         subtopicProgress: [subtopicProgressSchema], 
         
         // Estado general del tema
-        isTopicCompleted: {
+        isCompleted: {
             type: Boolean,
-            default: false,
+            default: false
         },
     },
     {
@@ -35,7 +35,10 @@ const progressSchema = new mongoose.Schema(
     }
 );
 
-progressSchema.index({ userId: 1, topicId: 1 }, { unique: true });
+progressSchema.index(
+  { userId: 1, roadmapId: 1, topicId: 1 },
+  { unique: true }
+);
 
 const Progress = mongoose.model('Progress', progressSchema);
 

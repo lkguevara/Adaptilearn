@@ -9,7 +9,6 @@ import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Rutas públicas
 router.get("/", getPublicRoadmaps);
 router.get("/me", authMiddleware, getRoadmaps);
 router.post("/", authMiddleware, createRoadmap);
