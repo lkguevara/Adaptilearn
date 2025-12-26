@@ -13,8 +13,7 @@ const progressSchema = new mongoose.Schema(
             required: true,
         },
         roadmapId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Roadmap',
+            type: String,
             required: true,
         },
         topicId: {

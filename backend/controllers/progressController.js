@@ -10,7 +10,7 @@ export const toggleSubtopic = async (req, res) => {
         const userId = req.user._id;
 
         // 1. Validar si el Roadmap existe
-        const roadmap = await Roadmap.findById(roadmapId);
+        const roadmap = await Roadmap.findOne({ id: roadmapId });
         
         if (!roadmap) {
             return res.status(404).json({ message: "Roadmap no encontrado. Verifica el ID." });
@@ -84,6 +84,7 @@ export const toggleSubtopic = async (req, res) => {
     }
 };
 
+// Obtener progreso por topic
 export const getProgressByTopic = async (req, res) => {
     try {
         const { roadmapId, topicId } = req.query;
@@ -94,7 +95,7 @@ export const getProgressByTopic = async (req, res) => {
         }
 
         // 1. Obtener el roadmap para conocer los subtopics totales
-        const roadmap = await Roadmap.findById(roadmapId);
+        const roadmap = await Roadmap.findOne({ id: roadmapId });
         
         if (!roadmap) {
             return res.status(404).json({ message: "Roadmap no encontrado." });
@@ -121,6 +122,7 @@ export const getProgressByTopic = async (req, res) => {
         const totalSubtopics = topicData.subtopics.length;
         const completedSubtopics = progress ? progress.subtopicProgress.filter(s => s.isCompleted).length : 0;
         const remainingSubtopics = totalSubtopics - completedSubtopics;
+        const percentageCompleted = totalSubtopics === 0 ? 0 : (completedSubtopics / totalSubtopics) * 100;
 
         res.status(200).json({
             progress: progress || null,
@@ -128,6 +130,7 @@ export const getProgressByTopic = async (req, res) => {
                 totalSubtopics,
                 completedSubtopics,
                 remainingSubtopics,
+                percentageCompleted,
                 isTopicCompleted: progress ? progress.isTopicCompleted : false,
                 subtopics: topicData.subtopics
             }
