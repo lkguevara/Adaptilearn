@@ -1,4 +1,6 @@
 import Roadmap, { Counter } from "../models/Roadmap.js";
+import User from "../models/User.js";
+import { checkAchievements } from "../utils/gamification.js";
 
 // Función auxiliar para generar el siguiente ID secuencial
 const getNextRoadmapId = async () => {
@@ -19,9 +21,26 @@ export const createRoadmap = async (req, res) => {
       id,
       userId: req.user._id
     });
-    res.status(201).json(roadmap);
+
+    // Actualizar estadísticas del usuario
+    const user = await User.findById(req.user._id);
+    user.stats.totalRoadmapsStarted += 1;
+
+    // Revisar logro de crear primer roadmap
+    const newAchievements = checkAchievements(user, user.stats);
+    if (newAchievements.length > 0) {
+      user.achievements.push(...newAchievements);
+    }
+
+    await user.save();
+
+    res.status(201).json({
+      message: "Roadmap creado exitosamente",
+      roadmap,
+      newAchievements: newAchievements.length > 0 ? newAchievements : null
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Error al crear roadmap", error: error.message });
   }
 };
 
@@ -60,7 +79,7 @@ export const getRoadmaps = async (req, res) => {
 // Traer un roadmap por ID - GET /:id
 export const getRoadmapById = async (req, res) => {
   try {
-    const roadmap = await Roadmap.findById(req.params.id);
+    const roadmap = await Roadmap.findOne({ id: req.params.id });
 
     if (!roadmap) return res.status(404).json({ message: "Roadmap No existe" });
 
