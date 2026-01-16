@@ -3,7 +3,10 @@ import {
   createRoadmap, 
   getPublicRoadmaps, 
   getRoadmaps, 
-  getRoadmapById 
+  getRoadmapById,
+  generateWithAI,
+  saveRoadmap,
+  deleteRoadmap
 } from "../controllers/roadmapController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import { validateRequest, createRoadmapSchema } from "../validators/schemas.js";
@@ -12,7 +15,10 @@ const router = express.Router();
 
 router.get("/", getPublicRoadmaps);
 router.get("/me", authMiddleware, getRoadmaps);
+router.post("/generate", authMiddleware, generateWithAI);
 router.post("/", authMiddleware, validateRequest(createRoadmapSchema), createRoadmap);
+router.patch("/:id/save", authMiddleware, saveRoadmap);
+router.delete("/:id", authMiddleware, deleteRoadmap);
 router.get("/:id", getRoadmapById);
 
 

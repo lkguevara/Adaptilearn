@@ -31,7 +31,9 @@ const roadmapSchema = new mongoose.Schema(
   {
     id: {
       type: String,
-      unique: true
+      unique: true,
+      sparse: true,
+      required: true
     },
     title: {
       type: String,
@@ -61,6 +63,17 @@ const roadmapSchema = new mongoose.Schema(
     metadata: {
         source: String,
         dateGenerated: String
+    },
+    
+    isSaved: {
+      type: Boolean,
+      default: false
+    },
+    
+    expiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
+      index: { expireAfterSeconds: 0 } // TTL index para eliminar automáticamente
     },
   },
   {
