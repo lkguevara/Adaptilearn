@@ -1,8 +1,8 @@
-import React from 'react'
+import Hero from '../components/home/Hero.jsx';
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <Hero />
   )
 }
 

@@ -1,16 +1,17 @@
 import { Routes, Route } from "react-router";
-import Layout from "../components/Layout.jsx";
+import Layout from "../components/layout/Layout.jsx";
 import Home from "../pages/Home.jsx";
 import Login from "../pages/Login.jsx";
 
 const AppRouter = () => {
   return (
-    <Layout>
-        <Routes>
-            <Route path="/" element={<Home />} />
+    <Routes>
+        {/* Rutas públicas */}
+        <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
             <Route path="/login" element={<Login />} />
-        </Routes>
-    </Layout>
+        </Route>
+    </Routes>
   );
 };
 
