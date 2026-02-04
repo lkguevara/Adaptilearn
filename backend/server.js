@@ -16,16 +16,15 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 // Routes
-app.use("/api", authRoutes);
-app.use("/api/roadmaps", roadmapRoutes);
-app.use("/api/progress", progressRoutes);
-app.use("/api", aiRoutes);
+app.use(authRoutes);
+app.use("/roadmaps", roadmapRoutes);
+app.use("/progress", progressRoutes);
+app.use(aiRoutes);
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
-    // Iniciar cleanup automático de roadmaps expirados
     startCleanupScheduler();
   })
   .catch((err) => console.error("MongoDB connection error:", err));
