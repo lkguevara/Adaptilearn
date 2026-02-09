@@ -6,8 +6,24 @@ import { buildRoadmapPrompt } from "../utils/promptBuilder.js";
 const isYouTubeUrl = (url = "") =>
   url.includes("youtube.com/") || url.includes("youtu.be/");
 
+const isYouTubeSearchUrl = (url = "") =>
+  url.includes("youtube.com/results?search_query=");
+
+const isYouTubeWatchUrl = (url = "") =>
+  url.includes("youtube.com/watch") || url.includes("youtu.be/");
+
 const buildYouTubeSearchUrl = (query) =>
   `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+
+const pickVideoQuery = (topic, fallback) => {
+  if (Array.isArray(topic?.search_queries) && topic.search_queries.length > 0) {
+    return topic.search_queries[0];
+  }
+  if (topic?.title) {
+    return `${topic.title} tutorial`;
+  }
+  return fallback || "tutorial";
+};
 
 const normalizeRoadmapResources = (roadmap) => {
   if (!roadmap?.modules) return roadmap;
@@ -19,9 +35,18 @@ const normalizeRoadmapResources = (roadmap) => {
       }
 
       topic.resources = topic.resources.map((resource) => {
-        if (!resource || resource.type) return resource;
-        const type = isYouTubeUrl(resource.url) ? "video" : "article";
-        return { ...resource, type };
+        if (!resource) return resource;
+
+        const type = resource.type || (isYouTubeUrl(resource.url) ? "video" : "article");
+        let url = resource.url;
+
+        // Si es video y trae link directo, lo convertimos a búsqueda para evitar links dudosos.
+        if (type === "video" && !isYouTubeSearchUrl(url)) {
+          const query = pickVideoQuery(topic, resource.name);
+          url = buildYouTubeSearchUrl(query);
+        }
+
+        return { ...resource, type, url };
       });
 
       const hasVideo = topic.resources.some((r) => r?.type === "video");
@@ -38,6 +63,16 @@ const normalizeRoadmapResources = (roadmap) => {
             url: buildYouTubeSearchUrl(q)
           });
         }
+      }
+
+      // Si aún no hay video, agrega uno básico basado en el título
+      if (!topic.resources.some((r) => r?.type === "video")) {
+        const q = pickVideoQuery(topic, "tutorial");
+        topic.resources.push({
+          type: "video",
+          name: `YouTube: ${q}`,
+          url: buildYouTubeSearchUrl(q)
+        });
       }
     });
   });

@@ -17,7 +17,7 @@ STRICT RULES:
 - FLASHCARDS: Each topic MUST have exactly 3 flashcards (object with "q" and "a") for spaced repetition.
 - SEARCH QUERIES: Each topic MUST have 2-3 "search_queries" (keywords for YouTube videos) to avoid dead links.
 - CONNECTIONS: Include a "connections" array at the root level to define the learning graph (from topic_id to topic_id).
-- RESOURCES: Each resource MUST include "type": "article" | "video". If type is "video", the URL must be a YouTube watch URL OR a YouTube search URL (results?search_query=...).
+- RESOURCES: Each resource MUST include "type": "article" | "video". If type is "video", use a YouTube search URL (results?search_query=...). Avoid direct watch links.
 - PROJECTS: Each topic MUST include a "project" object (title, description, deliverables).
 - FINAL PROJECT: The roadmap MUST include a "final_project" object at the root level.
 
@@ -40,7 +40,7 @@ JSON SCHEMA REQUIREMENTS:
       "topics": [
         {
           "id": string (format: "topic-1", "topic-2", etc),
-          "title": string (3-50 characters),
+          "title": string (3-80 characters),
           "summary": string (10-200 characters),
           "estimatedTime": string (format: "X hours/days/weeks"),
           "subtopics": [string, string, string, ...] (MINIMUM 3, format: 5-100 characters each),
@@ -58,7 +58,7 @@ JSON SCHEMA REQUIREMENTS:
           "resources": [
             {
               "type": "article" | "video",
-              "name": string (3-50 characters),
+              "name": string (3-80 characters),
               "url": string (must be https://; YouTube watch or search URL if video)
             }
           ] (MINIMUM 1, MAXIMUM 5)

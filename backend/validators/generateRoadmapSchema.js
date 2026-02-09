@@ -17,7 +17,7 @@ const resourceSchema = z.object({
   name: z
     .string()
     .min(3, 'Nombre del recurso debe tener al menos 3 caracteres')
-    .max(50, 'Nombre del recurso no puede exceder 50 caracteres'),
+    .max(80, 'Nombre del recurso no puede exceder 80 caracteres'),
   
   url: z
     .string()
@@ -74,7 +74,7 @@ const topicSchema = z.object({
   title: z
     .string()
     .min(3, 'Título del tema debe tener al menos 3 caracteres')
-    .max(50, 'Título del tema no puede exceder 50 caracteres'),
+    .max(80, 'Título del tema no puede exceder 80 caracteres'),
   
   summary: z
     .string()
@@ -164,6 +164,13 @@ export const generateRoadmapSchema = z
       .min(3, 'Debe haber al menos 3 módulos')
       .max(10, 'Máximo 10 módulos por roadmap'),
 
+    connections: z
+      .array(z.object({
+        from: z.string(),
+        to: z.string()
+      }))
+      .optional(),
+
     final_project: projectSchema
   })
   // Validaciones adicionales después de parsear
@@ -218,7 +225,8 @@ export async function validateAIGeneratedRoadmap(data) {
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const issues = error.errors.map(e => ({
+      const zodIssues = error.issues || error.errors || [];
+      const issues = zodIssues.map(e => ({
         field: e.path.join('.'),
         message: e.message,
         code: e.code
@@ -247,7 +255,8 @@ export async function validateGenerateRoadmapPrompt(data) {
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const issues = error.errors.map(e => ({
+      const zodIssues = error.issues || error.errors || [];
+      const issues = zodIssues.map(e => ({
         field: e.path.join('.'),
         message: e.message
       }));
@@ -311,7 +320,8 @@ export async function validateCompleteRoadmap(roadmap) {
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const issues = error.errors.map(e => ({
+      const zodIssues = error.issues || error.errors || [];
+      const issues = zodIssues.map(e => ({
         field: e.path.join('.') || 'root',
         message: e.message,
         code: e.code

@@ -155,7 +155,8 @@ export const validateRequest = (schema) => {
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const formattedErrors = error.errors.map(err => ({
+        const issues = error.issues || error.errors || [];
+        const formattedErrors = issues.map(err => ({
           field: err.path.join('.'),
           message: err.message
         }));
