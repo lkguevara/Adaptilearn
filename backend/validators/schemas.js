@@ -25,9 +25,52 @@ export const loginSchema = z.object({
 });
 
 // ========== ROADMAP SCHEMAS ==========
+const isYouTubeWatchUrl = (url) =>
+  /^https:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}(&.*)?$/i.test(url);
+
+const isYouTubeSearchUrl = (url) =>
+  /^https:\/\/(www\.)?youtube\.com\/results\?search_query=.+/i.test(url);
+
+const isYouTubeUrl = (url) => isYouTubeWatchUrl(url) || isYouTubeSearchUrl(url);
+
 export const resourceSchema = z.object({
   name: z.string().min(1, 'Nombre del recurso requerido'),
-  url: z.string().url('URL inválida')
+  url: z.string().url('URL inválida'),
+  type: z.enum(['article', 'video']).default('article')
+}).superRefine((resource, ctx) => {
+  if (resource.type === 'video' && !isYouTubeUrl(resource.url)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['url'],
+      message: 'URL de video debe ser de YouTube (watch o results)'
+    });
+  }
+});
+
+export const flashcardSchema = z.object({
+  q: z
+    .string()
+    .min(5, 'Pregunta debe tener al menos 5 caracteres')
+    .max(200, 'Pregunta no puede exceder 200 caracteres'),
+  a: z
+    .string()
+    .min(5, 'Respuesta debe tener al menos 5 caracteres')
+    .max(300, 'Respuesta no puede exceder 300 caracteres')
+});
+
+export const projectSchema = z.object({
+  title: z
+    .string()
+    .min(5, 'Título del proyecto debe tener al menos 5 caracteres')
+    .max(80, 'Título del proyecto no puede exceder 80 caracteres'),
+  description: z
+    .string()
+    .min(10, 'Descripción del proyecto debe tener al menos 10 caracteres')
+    .max(400, 'Descripción del proyecto no puede exceder 400 caracteres'),
+  deliverables: z
+    .array(z.string().min(3, 'Cada entregable debe tener al menos 3 caracteres'))
+    .min(2, 'Debe haber al menos 2 entregables')
+    .max(5, 'Máximo 5 entregables')
 });
 
 export const topicSchema = z.object({
@@ -38,6 +81,16 @@ export const topicSchema = z.object({
   subtopics: z
     .array(z.string().min(1, 'Subtema no puede estar vacío'))
     .min(1, 'Debe haber al menos un subtema'),
+  flashcards: z
+    .array(flashcardSchema)
+    .length(3, 'Debe haber exactamente 3 flashcards por tema')
+    .optional(),
+  search_queries: z
+    .array(z.string().min(3, 'Cada búsqueda debe tener al menos 3 caracteres'))
+    .min(2, 'Debe haber al menos 2 search_queries por tema')
+    .max(3, 'Máximo 3 search_queries por tema')
+    .optional(),
+  project: projectSchema.optional(),
   resources: z.array(resourceSchema).optional()
 });
 
@@ -64,6 +117,7 @@ export const createRoadmapSchema = z.object({
   modules: z
     .array(moduleSchema)
     .min(1, 'Debe haber al menos un módulo'),
+  final_project: projectSchema.optional(),
   connections: z.array(z.object({
     from: z.string(),
     to: z.string()

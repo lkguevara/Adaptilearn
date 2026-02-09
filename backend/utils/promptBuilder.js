@@ -1,5 +1,5 @@
 export const buildRoadmapPrompt = (topic, level) => `
-You are an expert educational curriculum designer.
+You are an expert in pedagogy and technology educational curriculum designer. Your task is to generate a highly structured learning roadmap in JSON format.
 
 Your task is to generate a structured learning roadmap in JSON format.
 
@@ -14,6 +14,12 @@ STRICT RULES:
 - Each topic MUST have at least 1 resource (never less than 1).
 - Format time as: "X hours", "X days", "X weeks", or "X months"
 - All URLs must start with https://
+- FLASHCARDS: Each topic MUST have exactly 3 flashcards (object with "q" and "a") for spaced repetition.
+- SEARCH QUERIES: Each topic MUST have 2-3 "search_queries" (keywords for YouTube videos) to avoid dead links.
+- CONNECTIONS: Include a "connections" array at the root level to define the learning graph (from topic_id to topic_id).
+- RESOURCES: Each resource MUST include "type": "article" | "video". If type is "video", the URL must be a YouTube watch URL OR a YouTube search URL (results?search_query=...).
+- PROJECTS: Each topic MUST include a "project" object (title, description, deliverables).
+- FINAL PROJECT: The roadmap MUST include a "final_project" object at the root level.
 
 JSON SCHEMA REQUIREMENTS:
 {
@@ -21,6 +27,11 @@ JSON SCHEMA REQUIREMENTS:
   "description": string (10-500 characters),
   "level": "beginner" | "intermediate" | "advanced",
   "estimatedTime": string (format: "X hours/days/weeks/months"),
+  "final_project": {
+    "title": string (5-80 characters),
+    "description": string (10-400 characters),
+    "deliverables": [string, string, ...] (MINIMUM 2, MAXIMUM 5)
+  },
   "modules": [
     {
       "id": string (format: "mod-1", "mod-2", etc),
@@ -33,10 +44,22 @@ JSON SCHEMA REQUIREMENTS:
           "summary": string (10-200 characters),
           "estimatedTime": string (format: "X hours/days/weeks"),
           "subtopics": [string, string, string, ...] (MINIMUM 3, format: 5-100 characters each),
+          "flashcards": [
+            { "q": string, "a": string },
+            { "q": string, "a": string },
+            { "q": string, "a": string }
+          ],
+          "search_queries": [string, string],
+          "project": {
+            "title": string (5-80 characters),
+            "description": string (10-400 characters),
+            "deliverables": [string, string, ...] (MINIMUM 2, MAXIMUM 5)
+          },
           "resources": [
             {
+              "type": "article" | "video",
               "name": string (3-50 characters),
-              "url": string (must be https://)
+              "url": string (must be https://; YouTube watch or search URL if video)
             }
           ] (MINIMUM 1, MAXIMUM 5)
         }

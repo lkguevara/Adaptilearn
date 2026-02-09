@@ -3,6 +3,48 @@ import { generateRoadmapAI } from "../services/aiService.js";
 import { validateCompleteRoadmap } from "../validators/generateRoadmapSchema.js";
 import { buildRoadmapPrompt } from "../utils/promptBuilder.js";
 
+const isYouTubeUrl = (url = "") =>
+  url.includes("youtube.com/") || url.includes("youtu.be/");
+
+const buildYouTubeSearchUrl = (query) =>
+  `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+
+const normalizeRoadmapResources = (roadmap) => {
+  if (!roadmap?.modules) return roadmap;
+
+  roadmap.modules.forEach((module) => {
+    module?.topics?.forEach((topic) => {
+      if (!Array.isArray(topic.resources)) {
+        topic.resources = [];
+      }
+
+      topic.resources = topic.resources.map((resource) => {
+        if (!resource || resource.type) return resource;
+        const type = isYouTubeUrl(resource.url) ? "video" : "article";
+        return { ...resource, type };
+      });
+
+      const hasVideo = topic.resources.some((r) => r?.type === "video");
+      const queries = Array.isArray(topic.search_queries)
+        ? topic.search_queries
+        : [];
+
+      if (!hasVideo && queries.length > 0) {
+        for (const q of queries) {
+          if (topic.resources.length >= 5) break;
+          topic.resources.push({
+            type: "video",
+            name: `YouTube: ${q}`,
+            url: buildYouTubeSearchUrl(q)
+          });
+        }
+      }
+    });
+  });
+
+  return roadmap;
+};
+
 // Función auxiliar para generar el siguiente ID secuencial
 const getNextRoadmapId = async () => {
   const counter = await Counter.findOneAndUpdate(
@@ -40,9 +82,10 @@ export const generateRoadmap = async (req, res) => {
 
     // 2. Llamar a la IA
     const aiResponse = await generateRoadmapAI(prompt);
+    const normalizedResponse = normalizeRoadmapResources(aiResponse);
 
     // 3. Validar con Zod
-    const validationResult = await validateCompleteRoadmap(aiResponse);
+    const validationResult = await validateCompleteRoadmap(normalizedResponse);
 
     if (!validationResult.success) {
       return res.status(422).json({

@@ -5,6 +5,14 @@ import { z } from 'zod';
 
 // ========== SCHEMAS POR NIVEL ==========
 
+const isYouTubeWatchUrl = (url) =>
+  /^https:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}(&.*)?$/i.test(url);
+
+const isYouTubeSearchUrl = (url) =>
+  /^https:\/\/(www\.)?youtube\.com\/results\?search_query=.+/i.test(url);
+
+const isYouTubeUrl = (url) => isYouTubeWatchUrl(url) || isYouTubeSearchUrl(url);
+
 const resourceSchema = z.object({
   name: z
     .string()
@@ -14,13 +22,49 @@ const resourceSchema = z.object({
   url: z
     .string()
     .url('URL inválida')
-    .startsWith('https://', 'URL debe ser HTTPS')
+    .startsWith('https://', 'URL debe ser HTTPS'),
+
+  type: z.enum(['article', 'video'])
+}).superRefine((resource, ctx) => {
+  if (resource.type === 'video' && !isYouTubeUrl(resource.url)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['url'],
+      message: 'URL de video debe ser de YouTube (watch o results)'
+    });
+  }
 });
 
 const subtopicSchema = z
   .string()
   .min(5, 'Subtema debe tener al menos 5 caracteres')
   .max(100, 'Subtema no puede exceder 100 caracteres');
+
+const flashcardSchema = z.object({
+  q: z
+    .string()
+    .min(5, 'Pregunta debe tener al menos 5 caracteres')
+    .max(200, 'Pregunta no puede exceder 200 caracteres'),
+  a: z
+    .string()
+    .min(5, 'Respuesta debe tener al menos 5 caracteres')
+    .max(300, 'Respuesta no puede exceder 300 caracteres')
+});
+
+const projectSchema = z.object({
+  title: z
+    .string()
+    .min(5, 'Título del proyecto debe tener al menos 5 caracteres')
+    .max(80, 'Título del proyecto no puede exceder 80 caracteres'),
+  description: z
+    .string()
+    .min(10, 'Descripción del proyecto debe tener al menos 10 caracteres')
+    .max(400, 'Descripción del proyecto no puede exceder 400 caracteres'),
+  deliverables: z
+    .array(z.string().min(3, 'Cada entregable debe tener al menos 3 caracteres'))
+    .min(2, 'Debe haber al menos 2 entregables')
+    .max(5, 'Máximo 5 entregables')
+});
 
 const topicSchema = z.object({
   id: z
@@ -48,6 +92,19 @@ const topicSchema = z.object({
     .array(subtopicSchema)
     .min(3, 'Debe haber al menos 3 subtemas por tema')
     .max(8, 'Máximo 8 subtemas por tema'),
+
+  flashcards: z
+    .array(flashcardSchema)
+    .length(3, 'Debe haber exactamente 3 flashcards por tema'),
+
+  search_queries: z
+    .array(
+      z.string().min(3, 'Cada búsqueda debe tener al menos 3 caracteres')
+    )
+    .min(2, 'Debe haber al menos 2 search_queries por tema')
+    .max(3, 'Máximo 3 search_queries por tema'),
+
+  project: projectSchema,
   
   resources: z
     .array(resourceSchema)
@@ -105,7 +162,9 @@ export const generateRoadmapSchema = z
     modules: z
       .array(moduleSchema)
       .min(3, 'Debe haber al menos 3 módulos')
-      .max(10, 'Máximo 10 módulos por roadmap')
+      .max(10, 'Máximo 10 módulos por roadmap'),
+
+    final_project: projectSchema
   })
   // Validaciones adicionales después de parsear
   .strict('No permitir campos extras en el JSON');

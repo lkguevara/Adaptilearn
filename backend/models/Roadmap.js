@@ -3,6 +3,17 @@ import mongoose from "mongoose";
 const resourceSchema = new mongoose.Schema({
   name: String,
   url: String,
+  type: {
+    type: String,
+    enum: ['article', 'video'],
+    default: 'article'
+  }
+});
+
+const projectSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  deliverables: [String]
 });
 
 const topicSchema = new mongoose.Schema({
@@ -11,6 +22,14 @@ const topicSchema = new mongoose.Schema({
   summary: String,
   estimatedTime: String,
   subtopics: [String],
+  flashcards: [
+    {
+      q: { type: String, required: true },
+      a: { type: String, required: true }
+    }
+  ],
+  search_queries: [String],
+  project: projectSchema,
   resources: [resourceSchema]
 });
 
@@ -75,6 +94,8 @@ const roadmapSchema = new mongoose.Schema(
       default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
       index: { expireAfterSeconds: 0 } // TTL index para eliminar automáticamente
     },
+
+    final_project: projectSchema,
   },
   {
     timestamps: true
