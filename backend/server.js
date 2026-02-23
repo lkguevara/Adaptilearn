@@ -11,15 +11,30 @@ import { authRoutes, roadmapRoutes, progressRoutes, aiRoutes } from "./routes/in
 
 const app = express()
 
+const ACCEPTED_ORIGINS = [
+  "http://localhost:3000",
+  "https://localhost:5173",
+];
 
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (ACCEPTED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+}));
+
 app.use(express.json());
 app.use(cookieParser());
+
 // Routes
 app.use(authRoutes);
 app.use("/roadmaps", roadmapRoutes);
 app.use("/progress", progressRoutes);
 app.use(aiRoutes);
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
