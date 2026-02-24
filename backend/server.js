@@ -13,16 +13,16 @@ const app = express()
 
 const ACCEPTED_ORIGINS = [
   "http://localhost:3000",
-  "https://localhost:5173",
+  "http://localhost:5173",
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (ACCEPTED_ORIGINS.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
+    if (!origin || ACCEPTED_ORIGINS.includes(origin)) {
+      return callback(null, true);
     }
+    return callback(new Error("Not allowed by CORS"));
+
   },
 }));
 
