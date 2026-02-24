@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import apiUrl from '../api/axios';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useAuthStore = create((set) => ({
 

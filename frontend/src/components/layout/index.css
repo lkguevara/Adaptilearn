@@ -1,0 +1,9 @@
+.gradient-border-secondary {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#f3f3f5, #f3f3f5) padding-box,
+    var(--primary-deg) border-box;
+  box-shadow:
+    0 6px 10px rgb(79 57 246 / 20%),
+    0 1px 0 #9810FA;
+}

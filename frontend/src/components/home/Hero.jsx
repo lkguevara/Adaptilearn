@@ -7,12 +7,12 @@ const Hero = () => {
         <Badge text="Aprendizaje con IA" />
 
         <article className="container mx-auto space-y-3 md:space-y-5">
-          <h1 className="font-accent text-4xl md:text-6xl lg:text-7xl text-secondary-500 font-bold">Aprende lo que quieras</h1>
-          <h2 className='font-accent text-3xl md:text-5xl lg:text-6xl text-primary-500 font-bold'>a tu ritmo</h2>
-          <p className='font-secondary text-secondary-300 text-lg md:text-xl lg:text-2xl font-light'>Nuestra IA te ayuda a crear y seguir rutas de aprendizaje personalizadas para alcanzar tus objetivos.</p>
+          <h1 className="font-secondary text-4xl md:text-6xl lg:text-7xl text-primary font-bold">Aprende lo que quieras</h1>
+          <h2 className='font-secondary text-3xl md:text-5xl lg:text-6xl text-secondary font-bold'>a tu ritmo</h2>
+          <p className='font-primary text-primary-500 text-base md:text-lg lg:text-xl font-light'>Nuestra IA te ayuda a crear y seguir rutas de aprendizaje personalizadas para alcanzar tus objetivos.</p>
         </article>
 
-        <SearchRoadmap />
+        {/* <SearchRoadmap /> */}
     </section>
   )
 }
