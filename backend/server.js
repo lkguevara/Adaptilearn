@@ -18,12 +18,15 @@ const ACCEPTED_ORIGINS = [
 
 app.use(cors({
   origin: (origin, callback) => {
+    // Allow undefined origin (Postman, curl, same server)
+    // or origins in the whitelist
     if (!origin || ACCEPTED_ORIGINS.includes(origin)) {
-      return callback(null, true);
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
     }
-    return callback(new Error("Not allowed by CORS"));
-
   },
+  credentials: true,
 }));
 
 app.use(express.json());
