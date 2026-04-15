@@ -1,5 +1,7 @@
 import { Mail, Lock, Eye, EyeOff} from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router';
+import { FcGoogle } from "react-icons/fc";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -10,14 +12,15 @@ const LoginForm = () => {
 
   return (
     <section className="min-h-[calc(100vh-100px)] flex items-center px-4">
-      <article className="w-full max-w-md mx-auto py-24 px-6 text-center inset-shadow-sm shadow-sm rounded-2xl">
+      <article className="w-full max-w-md mx-auto py-12 px-6 text-center inset-shadow-sm shadow-sm rounded-2xl">
         <h1 className="font-bold text-primary text-2xl md:text-3xl mb-1">  
             Bienvenido de nuevo
         </h1>
-        <p className="text-sm text-primary">Continúa tu viaje de aprendizaje</p>
+        <p className="text-sm text-gray-500">Continúa tu viaje de aprendizaje</p>
 
         {/* Formulario de inicio de sesión */}
         <form className="space-y-6 mt-6 text-left">
+        {/* email */}
           <div>
             <label htmlFor="email" className="text-sm font-medium text-primary">
               Correo electrónico
@@ -37,6 +40,7 @@ const LoginForm = () => {
             </div>
           </div>
 
+        {/* password */}
           <div>
             <label htmlFor="password" className=" text-sm font-medium text-primary">
               Contraseña
@@ -58,39 +62,43 @@ const LoginForm = () => {
                 className="absolute right-3 top-1/2 -translate-y-1/2"
                 aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
-                {showPassword ? <Eye className="w-4 h-4 text-gray-500" /> : <EyeOff className="w-4 h-4 text-gray-500" />}
+                {showPassword ? <Eye className="w-4 h-4 text-gray-500 cursor-pointer" /> : <EyeOff className="w-4 h-4 text-gray-500 cursor-pointer" />}
               </button>
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2  text-sm text-gray-900">
-                Recordarme
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                ¿Olvidaste tu contraseña?
-              </a>
-            </div>
+          {/* Forgot Password */}
+          <div className="text-sm text-center">
+            <Link to="#" className="font-medium text-primary">
+              ¿Olvidaste tu contraseña?
+            </Link>
           </div>
 
-          <div>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-500 cursor-pointer" 
+          >
+            Iniciar sesión
+          </button>
+
+          {/* google sign in */}
+          <div className="relative mt-6 flex items-center justify-center">
+            <div className="w-full border-t border-gray-300" />
+            <span className="absolute bg-white px-2 text-sm text-gray-500">O continúa con</span>
+          </div>
+
+          <div className="my-8">
             <button
-              type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 cursor-pointer"
             >
-              Iniciar sesión
+              <FcGoogle className="w-5 h-5 mr-2" />
+              <Link to="#" className="font-medium text-gray-600">
+                Iniciar sesión con Google
+              </Link>
             </button>
           </div>
+
         </form>
 
       </article>
